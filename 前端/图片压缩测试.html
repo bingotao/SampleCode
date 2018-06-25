@@ -1,0 +1,87 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+</head>
+<body>
+    <input id="range" type="range" min="0" max="1" step="0.01" /><label id="value"></label>
+    <br />
+    <input id="file" type="file" />
+    <script>
+
+        function compress(base64, setting, callback) {
+            var img = new Image();
+
+            img.onload = function () {
+                // 默认按比例压缩
+                var w = this.width,
+                    h = this.height;
+
+                if ((w > h ? w : h) > setting.max) {
+                    // 最大边长设置为max值，小边长按比例
+                    w0 = w > h ? setting.max : setting.max * w / h;
+                    h0 = w > h ? setting.max * h / w : setting.max;
+
+                    var quality = 0.7;  // 默认图片质量为0.7
+                    // 图像质量
+                    if (setting.quality && setting.quality <= 1 && setting.quality > 0) {
+                        quality = setting.quality;
+                    }
+
+                    //生成canvas
+                    var canvas = document.createElement('canvas');
+                    var ctx = canvas.getContext('2d');
+                    // 创建属性节点
+                    var anw = document.createAttribute("width");
+                    anw.nodeValue = w0;
+                    var anh = document.createAttribute("height");
+                    anh.nodeValue = h0;
+                    canvas.setAttributeNode(anw);
+                    canvas.setAttributeNode(anh);
+                    ctx.drawImage(this, 0, 0, w0, h0);
+
+                    // quality值越小，所绘制出的图像越模糊
+                    var base64 = canvas.toDataURL('image/jpeg', quality);
+                    this.src = base64;
+                } else {
+                    callback(this.src);
+                }
+            }
+
+            img.src = base64;
+        }
+
+        $(function () {
+            var quality = 0.5;
+            var reader = new FileReader();
+
+            var $value = $("#value").html(quality);
+            var $range = $("#range").val(quality).on("change", function (e) {
+                quality = $range.val() - 0;
+                $value.html(quality);
+            });
+
+            reader.onload = function (e) {
+                var img = new Image();
+                var base64 = e.target.result;
+
+                compress(base64, {
+                    max: 1920,
+                    quality: quality
+                }, function (src) {
+                    img.src = src;
+                    $(img).appendTo("body");
+                });
+            };
+
+            var $file = $("#file").on("change", function (e) {
+                var t = reader.readAsDataURL(e.target.files[0]);
+            });
+
+        });
+    </script>
+</body>
+</html>
