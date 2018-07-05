@@ -22,8 +22,8 @@
 
                 if ((w > h ? w : h) > setting.max) {
                     // 最大边长设置为max值，小边长按比例
-                    w0 = w > h ? setting.max : setting.max * w / h;
-                    h0 = w > h ? setting.max * h / w : setting.max;
+                    var w0 = w > h ? setting.max : setting.max * w / h;
+                    var h0 = w > h ? setting.max * h / w : setting.max;
 
                     var quality = 0.7;  // 默认图片质量为0.7
                     // 图像质量
