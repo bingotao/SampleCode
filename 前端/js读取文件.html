@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>js读取文件</title>
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+</head>
+
+<body>
+    <input id="file" type="file" />
+    <script>
+        $(function () {
+            $('#file').on("change", function (e) {
+                if (this.files && this.files.length) {
+                    var file = this.files[0];
+                    var fr = new FileReader();
+                    fr.onload = function () {
+                        console.log(this.result)
+                        alert(this.result);
+                    }
+                    fr.readAsText(file);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
